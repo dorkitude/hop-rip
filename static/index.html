@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>hop.rip</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐇</text></svg>">
+<style>
+/* One column: the shortener form, the fresh result, then this browser's own links. */
+:root {
+  --bg: #f6f7f2; --card: #ffffff; --fg: #1d2318; --muted: #67705f; --line: #dfe3d6;
+  --accent: #3f8f29; --accent-fg: #ffffff; --warn: #9a5b00; --warn-bg: #fff4dd;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #12150f; --card: #1b2017; --fg: #e8ecdf; --muted: #9aa48d; --line: #2e3527;
+    --accent: #7cc95f; --accent-fg: #0f1a0a; --warn: #f2b860; --warn-bg: #2b2210; color-scheme: dark; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--sans);
+  padding: 40px max(16px, env(safe-area-inset-right)) 64px max(16px, env(safe-area-inset-left)); }
+main { max-width: 36rem; margin: 0 auto; display: grid; gap: 24px; }
+h1 { margin: 0; font-size: 2.2rem; letter-spacing: -0.02em; }
+h1 span { color: var(--accent); }
+.tag { margin: 4px 0 0; color: var(--muted); }
+form, .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 20px; display: grid; gap: 12px; }
+label { font-size: 0.85rem; color: var(--muted); display: grid; gap: 4px; }
+input { width: 100%; padding: 11px 12px; border: 1px solid var(--line); border-radius: 10px; font: inherit;
+  background: var(--bg); color: var(--fg); }
+.slug { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); }
+.slug span { padding-left: 12px; color: var(--muted); font-family: var(--mono); font-size: 0.9rem; white-space: nowrap; }
+.slug input { border: 0; padding-left: 2px; font-family: var(--mono); min-width: 0; }
+button { font: inherit; font-weight: 600; border: 0; border-radius: 10px; padding: 11px 16px; cursor: pointer;
+  background: var(--accent); color: var(--accent-fg); }
+button.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); font-weight: 500; padding: 6px 10px; }
+button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.error { color: #c0392b; margin: 0; min-height: 1.5em; }
+.short { font-family: var(--mono); font-size: 1.2rem; word-break: break-all; }
+.short a { color: var(--accent); }
+.key { background: var(--warn-bg); color: var(--warn); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; }
+.key code { font-family: var(--mono); word-break: break-all; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+h2 { font-size: 1rem; margin: 0; }
+ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+li { display: grid; gap: 4px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+li:last-child { border-bottom: 0; padding-bottom: 0; }
+li .dest { color: var(--muted); font-size: 0.85rem; word-break: break-all; }
+footer { color: var(--muted); font-size: 0.85rem; }
+footer code { font-family: var(--mono); }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>hop<span>.</span>rip 🐇</h1>
+    <p class="tag">Short links. No account: each link gets its own edit key.</p>
+  </header>
+
+  <form id="new">
+    <label>Long URL <input id="url" name="url" type="url" required placeholder="https://example.com/a/very/long/path"></label>
+    <label>Custom name (optional)
+      <div class="slug"><span id="base"></span><input id="slug" name="slug" placeholder="random" pattern="[A-Za-z0-9_\-]{1,64}" autocapitalize="off" autocomplete="off"></div>
+    </label>
+    <button type="submit">Shorten</button>
+    <p class="error" id="error" role="alert"></p>
+  </form>
+
+  <section class="card" id="result" hidden>
+    <div class="short"><a id="short" target="_blank" rel="noopener"></a></div>
+    <div class="row"><button class="ghost" id="copy" type="button">Copy link</button></div>
+    <div class="key">Edit key: <code id="key"></code><br>This browser remembers it. Save it somewhere if you want to change or delete the link from anywhere else.</div>
+  </section>
+
+  <section class="card" id="mine" hidden>
+    <h2>Links made in this browser</h2>
+    <ul id="list"></ul>
+  </section>
+
+  <footer>Also an API and a CLI: <code>hop new https://…</code>. <a href="https://github.com/dorkitude/hop-rip">Source</a>, self-hostable.</footer>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+const STORE = "hop-links";
+const load = () => { try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; } };
+const save = (links) => { try { localStorage.setItem(STORE, JSON.stringify(links)); } catch {} };
+$("base").textContent = location.host + "/";
+
+async function api(method, path, body, key) {
+  const headers = { "content-type": "application/json" };
+  if (key) headers.authorization = "Bearer " + key;
+  const res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  const data = res.status === 204 ? null : await res.json().catch(() => null);
+  if (!res.ok) throw new Error((data && data.error) || "Request failed (" + res.status + ")");
+  return data;
+}
+
+function render() {
+  const links = load();
+  $("mine").hidden = links.length === 0;
+  const list = $("list");
+  list.replaceChildren();
+  for (const l of links) {
+    const li = document.createElement("li");
+    const a = document.createElement("a");
+    a.href = l.short_url; a.textContent = l.short_url.replace(/^https?:\/\//, ""); a.className = "short"; a.target = "_blank";
+    const dest = document.createElement("div"); dest.className = "dest"; dest.textContent = "→ " + l.url;
+    const row = document.createElement("div"); row.className = "row";
+    const edit = document.createElement("button"); edit.className = "ghost"; edit.type = "button"; edit.textContent = "Change URL";
+    const del = document.createElement("button"); del.className = "ghost"; del.type = "button"; del.textContent = "Delete";
+    edit.onclick = () => {
+      if (row.querySelector("input")) return;
+      const input = document.createElement("input"); input.type = "url"; input.value = l.url; input.id = "edit-" + l.slug;
+      const ok = document.createElement("button"); ok.type = "button"; ok.textContent = "Save";
+      ok.onclick = async () => {
+        try { const v = await api("PUT", "/api/links/" + l.slug, { url: input.value }, l.key);
+          save(load().map((x) => x.slug === l.slug ? { ...x, url: v.url } : x)); render();
+        } catch (e) { $("error").textContent = e.message; }
+      };
+      row.append(input, ok); input.focus();
+    };
+    del.onclick = async () => {
+      if (del.dataset.armed !== "1") { del.dataset.armed = "1"; del.textContent = "Really delete?"; return; }
+      try { await api("DELETE", "/api/links/" + l.slug, null, l.key); }
+      catch (e) { if (!/no such link/.test(e.message)) { $("error").textContent = e.message; return; } }
+      save(load().filter((x) => x.slug !== l.slug)); render();
+    };
+    row.append(edit, del);
+    li.append(a, dest, row);
+    list.append(li);
+  }
+}
+
+$("new").addEventListener("submit", async (ev) => {
+  ev.preventDefault();
+  $("error").textContent = "";
+  try {
+    const v = await api("POST", "/api/links", { url: $("url").value, slug: $("slug").value || null });
+    save([{ slug: v.slug, short_url: v.short_url, url: v.url, key: v.edit_key }, ...load()]);
+    $("short").href = v.short_url; $("short").textContent = v.short_url;
+    $("key").textContent = v.edit_key;
+    $("result").hidden = false;
+    $("new").reset();
+    render();
+  } catch (e) { $("error").textContent = e.message; }
+});
+
+$("copy").addEventListener("click", async () => {
+  const text = $("short").textContent;
+  try { await navigator.clipboard.writeText(text); $("copy").textContent = "Copied"; }
+  catch { getSelection().selectAllChildren($("short")); }
+  setTimeout(() => { $("copy").textContent = "Copy link"; }, 1500);
+});
+
+render();
+</script>
+</body>
+</html>

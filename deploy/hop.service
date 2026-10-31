@@ -1,0 +1,19 @@
+[Unit]
+Description=hop.rip URL shortener
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=hop
+Group=hop
+EnvironmentFile=-/etc/hop/env
+ExecStart=/usr/local/bin/hop serve
+Restart=on-failure
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/var/lib/hop
+
+[Install]
+WantedBy=multi-user.target
