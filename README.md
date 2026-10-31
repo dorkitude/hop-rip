@@ -49,9 +49,10 @@ be `http` or `https`.
 
 ## Storage
 
-Each link is one JSON file at `<data>/links/<aa>/<bb>/<slug>.json`, where `aabb…` is the hex SHA-256
-of the slug. That spreads files over 65,536 folders. New links are written to `<data>/tmp` and
-hard-linked into place, so two people can't claim the same slug at once; edits are atomic renames.
+Each link is one JSON file at `<data>/links/<aa>/<bb>/<cc>/<slug>.json`, where `aabbcc…` is the hex
+SHA-256 of the slug. That spreads files evenly over up to 16.7 million folders (created as needed).
+Data from 0.1, which used two levels, moves to the new layout the next time the server starts.
+New links are written to `<data>/tmp` and hard-linked into place, so two people can't claim the same slug at once; edits are atomic renames.
 Back up by copying the folder.
 
 ## Run your own

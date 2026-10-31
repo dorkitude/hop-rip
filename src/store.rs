@@ -1,5 +1,5 @@
 //! Sharded-folder key/value store: one JSON file per link at
-//! `<root>/links/<h0h1>/<h2h3>/<slug>.json`, where `h` is the hex SHA-256 of the slug.
+//! `<root>/links/<h0h1>/<h2h3>/<h4h5>/<slug>.json`, where `h` is the hex SHA-256 of the slug.
 //! Writes go to `<root>/tmp` first; creates are hard-linked into place (fails if the
 //! slug exists, so two creates can't race), updates are renamed over the old file.
 
@@ -47,13 +47,44 @@ impl Store {
         let root = root.as_ref().to_path_buf();
         fs::create_dir_all(root.join("links"))?;
         fs::create_dir_all(root.join("tmp"))?;
-        Ok(Store { root })
+        let store = Store { root };
+        store.migrate_two_deep()?;
+        Ok(store)
     }
 
     /// Callers must pass a validated slug (see `valid_slug`): it becomes a file name.
     fn path(&self, slug: &str) -> PathBuf {
         let h = sha256_hex(slug);
-        self.root.join("links").join(&h[0..2]).join(&h[2..4]).join(format!("{slug}.json"))
+        self.root.join("links").join(&h[0..2]).join(&h[2..4]).join(&h[4..6]).join(format!("{slug}.json"))
+    }
+
+    /// Moves links written by 0.1 (`links/<aa>/<bb>/<slug>.json`, two levels deep) to the
+    /// three-level layout. In the new layout that depth only holds folders, so any file
+    /// found there is an old one.
+    fn migrate_two_deep(&self) -> io::Result<()> {
+        for a in fs::read_dir(self.root.join("links"))? {
+            let a = a?.path();
+            if !a.is_dir() {
+                continue;
+            }
+            for b in fs::read_dir(&a)? {
+                let b = b?.path();
+                if !b.is_dir() {
+                    continue;
+                }
+                for f in fs::read_dir(&b)? {
+                    let f = f?.path();
+                    let slug = match (f.is_file(), f.file_stem().and_then(|s| s.to_str())) {
+                        (true, Some(s)) if f.extension().is_some_and(|e| e == "json") => s.to_string(),
+                        _ => continue,
+                    };
+                    let dest = self.path(&slug);
+                    fs::create_dir_all(dest.parent().expect("sharded path has a parent"))?;
+                    fs::rename(&f, &dest)?;
+                }
+            }
+        }
+        Ok(())
     }
 
     fn write_tmp(&self, link: &Link) -> io::Result<PathBuf> {
@@ -130,6 +161,20 @@ mod tests {
         let store = Store::open(dir.path()).unwrap();
         store.create(&link("abc")).unwrap();
         let h = sha256_hex("abc");
-        assert!(dir.path().join("links").join(&h[0..2]).join(&h[2..4]).join("abc.json").is_file());
+        assert!(dir.path().join("links").join(&h[0..2]).join(&h[2..4]).join(&h[4..6]).join("abc.json").is_file());
+    }
+
+    #[test]
+    fn migrates_two_deep_links() {
+        let dir = tempfile::tempdir().unwrap();
+        let h = sha256_hex("old");
+        let old = dir.path().join("links").join(&h[0..2]).join(&h[2..4]);
+        fs::create_dir_all(&old).unwrap();
+        fs::write(old.join("old.json"), serde_json::to_vec(&link("old")).unwrap()).unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        assert!(!old.join("old.json").exists());
+        assert_eq!(store.get("old").unwrap().unwrap().slug, "old");
+        Store::open(dir.path()).unwrap(); // a second open is a no-op
+        assert_eq!(store.get("old").unwrap().unwrap().slug, "old");
     }
 }
