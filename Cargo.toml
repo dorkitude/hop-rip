@@ -1,6 +1,6 @@
 [package]
 name = "hop-rip"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 description = "Tiny self-hostable URL shortener: one binary, sharded-folder key/value store, API + web app + CLI."
 license = "MIT"

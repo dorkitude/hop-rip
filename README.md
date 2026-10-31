@@ -49,11 +49,17 @@ be `http` or `https`.
 
 ## Storage
 
-Each link is one JSON file at `<data>/links/<aa>/<bb>/<cc>/<slug>.json`, where `aabbcc…` is the hex
-SHA-256 of the slug. That spreads files evenly over up to 16.7 million folders (created as needed).
-Data from 0.1, which used two levels, moves to the new layout the next time the server starts.
-New links are written to `<data>/tmp` and hard-linked into place, so two people can't claim the same slug at once; edits are atomic renames.
-Back up by copying the folder.
+Links are packed into 65,536 shard files at `<data>/shards/<aa>/<bb>.json`, where `aabb` starts the
+hex SHA-256 of the slug. Each shard is a plain JSON object of slug to link, so you can `cat` and
+`grep` it, and a 4 KB disk block holds a dozen or more links. A million links take about 65,000
+files and a few hundred MB, instead of a million files.
+
+Writes lock their shard in memory, rewrite it to `<data>/tmp` and rename it into place; redirects
+read without any lock, because the rename is atomic. One `hop` process owns a data folder (it holds an
+exclusive lock on `<data>/hop.lock`), so run one server per folder. Back up by copying the folder.
+
+Data from 0.1 and 0.2 (one file per link under `<data>/links/`) moves into shards the next time
+the server starts.
 
 ## Run your own
 
