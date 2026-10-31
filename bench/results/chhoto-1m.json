@@ -1,0 +1,833 @@
+{
+ "system": "chhoto",
+ "variant": "",
+ "links": 1000000,
+ "duration_s": 15,
+ "runs_per_point": 3,
+ "started": "2026-10-31T12:13:35Z",
+ "install_bytes": {
+  "sintan1729/chhoto-url:7.10.5": 18100000
+ },
+ "download_bytes": {
+  "sintan1729/chhoto-url:7.10.5": 5782937
+ },
+ "disk_empty": {
+  "bytes": 122880,
+  "inodes": 6
+ },
+ "seed": {
+  "links": 1000000,
+  "seconds": 1663.6,
+  "rate": 601,
+  "failed": 0
+ },
+ "disk_seeded": {
+  "bytes": 691036160,
+  "inodes": 6
+ },
+ "verify": {
+  "checked": 350,
+  "problems": 0,
+  "examples": []
+ },
+ "memory_after_seed": {
+  "anon": 6680576,
+  "file": 834879488,
+  "kernel": 47095808,
+  "slab_reclaimable": 46509584,
+  "current": 888975360
+ },
+ "cold_start_s": {
+  "median": 3.79,
+  "all": [
+   4.982,
+   1.773,
+   3.79
+  ]
+ },
+ "idle": {
+  "anon": 3973120,
+  "total": 1073582080,
+  "breakdown": {
+   "anon": 3973120,
+   "file": 1055330304,
+   "kernel": 14229504,
+   "slab_reclaimable": 13774432,
+   "current": 1073582080
+  }
+ },
+ "workloads": {
+  "redirect": {
+   "points": [
+    {
+     "achieved_rps": 1000,
+     "p50_ms": 0.22,
+     "p99_ms": 2.463,
+     "p999_ms": 4.445,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 3.287,
+     "requests": 15000,
+     "rate": 1000,
+     "peak_anon": 30801920,
+     "peak_total": 1073725440,
+     "runs": [
+      {
+       "requests": 15000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 1000,
+       "p50_ms": 0.22,
+       "p99_ms": 2.014,
+       "p999_ms": 3.841,
+       "max_ms": 7.744,
+       "codes": {
+        "307": 15000
+       },
+       "rate": 1000,
+       "cpu_seconds": 4.49,
+       "peak_anon": 6930432,
+       "peak_total": 1073725440,
+       "cpu_s_per_10k": 2.995
+      },
+      {
+       "requests": 15000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 976,
+       "p50_ms": 0.23,
+       "p99_ms": 784.898,
+       "p999_ms": 839.431,
+       "max_ms": 852.384,
+       "codes": {
+        "307": 15000
+       },
+       "rate": 1000,
+       "cpu_seconds": 11.75,
+       "peak_anon": 30801920,
+       "peak_total": 1073721344,
+       "cpu_s_per_10k": 7.836
+      },
+      {
+       "requests": 15000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 1000,
+       "p50_ms": 0.204,
+       "p99_ms": 2.463,
+       "p999_ms": 4.445,
+       "max_ms": 8.087,
+       "codes": {
+        "307": 15000
+       },
+       "rate": 1000,
+       "cpu_seconds": 4.93,
+       "peak_anon": 26841088,
+       "peak_total": 1072549888,
+       "cpu_s_per_10k": 3.287
+      }
+     ]
+    },
+    {
+     "achieved_rps": 2000,
+     "p50_ms": 0.189,
+     "p99_ms": 2.114,
+     "p999_ms": 4.672,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 2.481,
+     "requests": 30000,
+     "rate": 2000,
+     "peak_anon": 29282304,
+     "peak_total": 1071345664,
+     "runs": [
+      {
+       "requests": 29999,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 2000,
+       "p50_ms": 0.19,
+       "p99_ms": 2.058,
+       "p999_ms": 4.939,
+       "max_ms": 9.14,
+       "codes": {
+        "307": 29999
+       },
+       "rate": 2000,
+       "cpu_seconds": 7.25,
+       "peak_anon": 27918336,
+       "peak_total": 1054253056,
+       "cpu_s_per_10k": 2.418
+      },
+      {
+       "requests": 30000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 2000,
+       "p50_ms": 0.184,
+       "p99_ms": 2.271,
+       "p999_ms": 4.665,
+       "max_ms": 8.243,
+       "codes": {
+        "307": 30000
+       },
+       "rate": 2000,
+       "cpu_seconds": 7.71,
+       "peak_anon": 28639232,
+       "peak_total": 1067364352,
+       "cpu_s_per_10k": 2.57
+      },
+      {
+       "requests": 30000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 1999,
+       "p50_ms": 0.189,
+       "p99_ms": 2.114,
+       "p999_ms": 4.672,
+       "max_ms": 6.249,
+       "codes": {
+        "307": 30000
+       },
+       "rate": 2000,
+       "cpu_seconds": 7.44,
+       "peak_anon": 29282304,
+       "peak_total": 1071345664,
+       "cpu_s_per_10k": 2.481
+      }
+     ]
+    },
+    {
+     "achieved_rps": 4526,
+     "p50_ms": 0.22,
+     "p99_ms": 5985.73,
+     "p999_ms": 10000.23,
+     "error_rate": 0.00124,
+     "cpu_s_per_10k": 2.268,
+     "requests": 75000,
+     "rate": 5000,
+     "peak_anon": 43708416,
+     "peak_total": 1073725440,
+     "runs": [
+      {
+       "requests": 75000,
+       "errors": 93,
+       "error_rate": 0.00124,
+       "achieved_rps": 4994,
+       "p50_ms": 0.201,
+       "p99_ms": 5442.873,
+       "p999_ms": 10000.23,
+       "max_ms": 10003.993,
+       "codes": {
+        "307": 74907,
+        "0": 93
+       },
+       "rate": 5000,
+       "cpu_seconds": 14.74,
+       "peak_anon": 40845312,
+       "peak_total": 1073725440,
+       "cpu_s_per_10k": 1.966
+      },
+      {
+       "requests": 74947,
+       "errors": 85,
+       "error_rate": 0.00113,
+       "achieved_rps": 3005,
+       "p50_ms": 0.22,
+       "p99_ms": 5985.73,
+       "p999_ms": 10000.084,
+       "max_ms": 10001.471,
+       "codes": {
+        "307": 74862,
+        "0": 85
+       },
+       "rate": 5000,
+       "cpu_seconds": 17.0,
+       "peak_anon": 40964096,
+       "peak_total": 1073717248,
+       "cpu_s_per_10k": 2.268
+      },
+      {
+       "requests": 75000,
+       "errors": 1025,
+       "error_rate": 0.01367,
+       "achieved_rps": 4526,
+       "p50_ms": 39.883,
+       "p99_ms": 10000.287,
+       "p999_ms": 10004.237,
+       "max_ms": 10017.194,
+       "codes": {
+        "307": 73975,
+        "0": 1025
+       },
+       "rate": 5000,
+       "cpu_seconds": 19.03,
+       "peak_anon": 43708416,
+       "peak_total": 1073614848,
+       "cpu_s_per_10k": 2.537
+      }
+     ]
+    },
+    {
+     "achieved_rps": 2576,
+     "p50_ms": 6844.911,
+     "p99_ms": 10391.492,
+     "p999_ms": 11998.632,
+     "error_rate": 0.21178,
+     "cpu_s_per_10k": 3.215,
+     "requests": 81688,
+     "rate": 10000,
+     "peak_anon": 43769856,
+     "peak_total": 1073741824,
+     "runs": [
+      {
+       "requests": 81988,
+       "errors": 9954,
+       "error_rate": 0.12141,
+       "achieved_rps": 2882,
+       "p50_ms": 6844.911,
+       "p99_ms": 10388.769,
+       "p999_ms": 11998.632,
+       "max_ms": 13201.141,
+       "codes": {
+        "307": 72034,
+        "0": 9954
+       },
+       "rate": 10000,
+       "cpu_seconds": 26.36,
+       "peak_anon": 43044864,
+       "peak_total": 1073680384,
+       "cpu_s_per_10k": 3.215
+      },
+      {
+       "requests": 81688,
+       "errors": 17300,
+       "error_rate": 0.21178,
+       "achieved_rps": 2576,
+       "p50_ms": 6569.151,
+       "p99_ms": 10391.492,
+       "p999_ms": 11296.679,
+       "max_ms": 13029.193,
+       "codes": {
+        "307": 64388,
+        "0": 17300
+       },
+       "rate": 10000,
+       "cpu_seconds": 24.29,
+       "peak_anon": 42606592,
+       "peak_total": 1073741824,
+       "cpu_s_per_10k": 2.974
+      },
+      {
+       "requests": 81492,
+       "errors": 25066,
+       "error_rate": 0.30759,
+       "achieved_rps": 2258,
+       "p50_ms": 7982.741,
+       "p99_ms": 12514.161,
+       "p999_ms": 13107.491,
+       "max_ms": 13654.618,
+       "codes": {
+        "307": 56426,
+        "0": 25066
+       },
+       "rate": 10000,
+       "cpu_seconds": 27.25,
+       "peak_anon": 43769856,
+       "peak_total": 1073721344,
+       "cpu_s_per_10k": 3.344
+      }
+     ]
+    },
+    {
+     "achieved_rps": 4116,
+     "p50_ms": 3.013,
+     "p99_ms": 127.805,
+     "p999_ms": 564.394,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 2.87,
+     "requests": 61744,
+     "rate": 0,
+     "peak_anon": 33652736,
+     "peak_total": 1060495360,
+     "runs": [
+      {
+       "requests": 58282,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 3874,
+       "p50_ms": 3.013,
+       "p99_ms": 150.268,
+       "p999_ms": 627.988,
+       "max_ms": 630.135,
+       "codes": {
+        "307": 58282
+       },
+       "rate": 0,
+       "cpu_seconds": 17.59,
+       "peak_anon": 33652736,
+       "peak_total": 1060126720,
+       "cpu_s_per_10k": 3.018
+      },
+      {
+       "requests": 62588,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 4151,
+       "p50_ms": 3.063,
+       "p99_ms": 127.17,
+       "p999_ms": 538.806,
+       "max_ms": 540.977,
+       "codes": {
+        "307": 62588
+       },
+       "rate": 0,
+       "cpu_seconds": 17.67,
+       "peak_anon": 31002624,
+       "peak_total": 1053831168,
+       "cpu_s_per_10k": 2.823
+      },
+      {
+       "requests": 61744,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 4116,
+       "p50_ms": 2.946,
+       "p99_ms": 127.805,
+       "p999_ms": 564.394,
+       "max_ms": 569.843,
+       "codes": {
+        "307": 61744
+       },
+       "rate": 0,
+       "cpu_seconds": 17.72,
+       "peak_anon": 31649792,
+       "peak_total": 1060495360,
+       "cpu_s_per_10k": 2.87
+      }
+     ]
+    }
+   ],
+   "max_rate_p99_under_50ms": 2000
+  },
+  "create": {
+   "points": [
+    {
+     "achieved_rps": 100,
+     "p50_ms": 3.255,
+     "p99_ms": 35.141,
+     "p999_ms": 59.701,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 12.168,
+     "requests": 1500,
+     "rate": 100,
+     "peak_anon": 28065792,
+     "peak_total": 1051906048,
+     "runs": [
+      {
+       "requests": 1500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 100,
+       "p50_ms": 3.308,
+       "p99_ms": 45.988,
+       "p999_ms": 73.389,
+       "max_ms": 83.32,
+       "codes": {
+        "200": 1500
+       },
+       "rate": 100,
+       "cpu_seconds": 1.9,
+       "peak_anon": 28065792,
+       "peak_total": 1051811840,
+       "cpu_s_per_10k": 12.671
+      },
+      {
+       "requests": 1500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 100,
+       "p50_ms": 3.108,
+       "p99_ms": 35.141,
+       "p999_ms": 59.701,
+       "max_ms": 60.188,
+       "codes": {
+        "200": 1500
+       },
+       "rate": 100,
+       "cpu_seconds": 1.79,
+       "peak_anon": 27947008,
+       "peak_total": 1051906048,
+       "cpu_s_per_10k": 11.954
+      },
+      {
+       "requests": 1500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 100,
+       "p50_ms": 3.255,
+       "p99_ms": 29.036,
+       "p999_ms": 35.925,
+       "max_ms": 38.746,
+       "codes": {
+        "200": 1500
+       },
+       "rate": 100,
+       "cpu_seconds": 1.83,
+       "peak_anon": 28041216,
+       "peak_total": 1051820032,
+       "cpu_s_per_10k": 12.168
+      }
+     ]
+    },
+    {
+     "achieved_rps": 200,
+     "p50_ms": 2.329,
+     "p99_ms": 39.809,
+     "p999_ms": 74.301,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 8.629,
+     "requests": 3000,
+     "rate": 200,
+     "peak_anon": 28139520,
+     "peak_total": 1059999744,
+     "runs": [
+      {
+       "requests": 3000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 200,
+       "p50_ms": 3.494,
+       "p99_ms": 39.809,
+       "p999_ms": 61.477,
+       "max_ms": 71.738,
+       "codes": {
+        "200": 3000
+       },
+       "rate": 200,
+       "cpu_seconds": 2.96,
+       "peak_anon": 28020736,
+       "peak_total": 1054240768,
+       "cpu_s_per_10k": 9.864
+      },
+      {
+       "requests": 3000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 200,
+       "p50_ms": 2.329,
+       "p99_ms": 29.262,
+       "p999_ms": 74.301,
+       "max_ms": 80.142,
+       "codes": {
+        "200": 3000
+       },
+       "rate": 200,
+       "cpu_seconds": 2.59,
+       "peak_anon": 28119040,
+       "peak_total": 1057275904,
+       "cpu_s_per_10k": 8.629
+      },
+      {
+       "requests": 3000,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 200,
+       "p50_ms": 2.077,
+       "p99_ms": 229.273,
+       "p999_ms": 305.092,
+       "max_ms": 331.308,
+       "codes": {
+        "200": 3000
+       },
+       "rate": 200,
+       "cpu_seconds": 2.18,
+       "peak_anon": 28139520,
+       "peak_total": 1059999744,
+       "cpu_s_per_10k": 7.275
+      }
+     ]
+    },
+    {
+     "achieved_rps": 500,
+     "p50_ms": 7.697,
+     "p99_ms": 317.59,
+     "p999_ms": 417.476,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 6.334,
+     "requests": 7500,
+     "rate": 500,
+     "peak_anon": 28844032,
+     "peak_total": 1073606656,
+     "runs": [
+      {
+       "requests": 7500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 500,
+       "p50_ms": 1.934,
+       "p99_ms": 171.669,
+       "p999_ms": 218.053,
+       "max_ms": 234.816,
+       "codes": {
+        "200": 7500
+       },
+       "rate": 500,
+       "cpu_seconds": 4.23,
+       "peak_anon": 28454912,
+       "peak_total": 1064677376,
+       "cpu_s_per_10k": 5.639
+      },
+      {
+       "requests": 7500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 493,
+       "p50_ms": 8.715,
+       "p99_ms": 388.866,
+       "p999_ms": 417.476,
+       "max_ms": 432.703,
+       "codes": {
+        "200": 7500
+       },
+       "rate": 500,
+       "cpu_seconds": 4.75,
+       "peak_anon": 28844032,
+       "peak_total": 1071067136,
+       "cpu_s_per_10k": 6.334
+      },
+      {
+       "requests": 7500,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 500,
+       "p50_ms": 7.697,
+       "p99_ms": 317.59,
+       "p999_ms": 438.768,
+       "max_ms": 443.854,
+       "codes": {
+        "200": 7500
+       },
+       "rate": 500,
+       "cpu_seconds": 4.84,
+       "peak_anon": 28831744,
+       "peak_total": 1073606656,
+       "cpu_s_per_10k": 6.456
+      }
+     ]
+    },
+    {
+     "achieved_rps": 655,
+     "p50_ms": 2611.303,
+     "p99_ms": 10001.026,
+     "p999_ms": 10003.507,
+     "error_rate": 0.06833,
+     "cpu_s_per_10k": 5.115,
+     "requests": 15000,
+     "rate": 1000,
+     "peak_anon": 38391808,
+     "peak_total": 1073725440,
+     "runs": [
+      {
+       "requests": 15000,
+       "errors": 1025,
+       "error_rate": 0.06833,
+       "achieved_rps": 653,
+       "p50_ms": 2611.303,
+       "p99_ms": 10001.919,
+       "p999_ms": 10018.436,
+       "max_ms": 10026.862,
+       "codes": {
+        "200": 13975,
+        "0": 1025
+       },
+       "rate": 1000,
+       "cpu_seconds": 7.67,
+       "peak_anon": 38203392,
+       "peak_total": 1073725440,
+       "cpu_s_per_10k": 5.115
+      },
+      {
+       "requests": 15000,
+       "errors": 1025,
+       "error_rate": 0.06833,
+       "achieved_rps": 696,
+       "p50_ms": 4369.4,
+       "p99_ms": 10000.983,
+       "p999_ms": 10003.095,
+       "max_ms": 10009.029,
+       "codes": {
+        "200": 13975,
+        "0": 1025
+       },
+       "rate": 1000,
+       "cpu_seconds": 8.29,
+       "peak_anon": 38346752,
+       "peak_total": 1073692672,
+       "cpu_s_per_10k": 5.529
+      },
+      {
+       "requests": 15000,
+       "errors": 970,
+       "error_rate": 0.06467,
+       "achieved_rps": 655,
+       "p50_ms": 938.331,
+       "p99_ms": 10001.026,
+       "p999_ms": 10003.507,
+       "max_ms": 10016.796,
+       "codes": {
+        "200": 14030,
+        "0": 970
+       },
+       "rate": 1000,
+       "cpu_seconds": 7.1,
+       "peak_anon": 38391808,
+       "peak_total": 1073643520,
+       "cpu_s_per_10k": 4.731
+      }
+     ]
+    },
+    {
+     "achieved_rps": 763,
+     "p50_ms": 74.668,
+     "p99_ms": 205.609,
+     "p999_ms": 295.714,
+     "error_rate": 0.0,
+     "cpu_s_per_10k": 5.137,
+     "requests": 11494,
+     "rate": 0,
+     "peak_anon": 34725888,
+     "peak_total": 1065500672,
+     "runs": [
+      {
+       "requests": 13087,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 868,
+       "p50_ms": 66.453,
+       "p99_ms": 147.524,
+       "p999_ms": 322.478,
+       "max_ms": 326.321,
+       "codes": {
+        "200": 13087
+       },
+       "rate": 0,
+       "cpu_seconds": 6.12,
+       "peak_anon": 34304000,
+       "peak_total": 1064878080,
+       "cpu_s_per_10k": 4.68
+      },
+      {
+       "requests": 11494,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 763,
+       "p50_ms": 74.668,
+       "p99_ms": 205.609,
+       "p999_ms": 249.182,
+       "max_ms": 263.73,
+       "codes": {
+        "200": 11494
+       },
+       "rate": 0,
+       "cpu_seconds": 5.9,
+       "peak_anon": 34574336,
+       "peak_total": 1065500672,
+       "cpu_s_per_10k": 5.137
+      },
+      {
+       "requests": 10674,
+       "errors": 0,
+       "error_rate": 0.0,
+       "achieved_rps": 705,
+       "p50_ms": 80.743,
+       "p99_ms": 239.877,
+       "p999_ms": 295.714,
+       "max_ms": 316.284,
+       "codes": {
+        "200": 10674
+       },
+       "rate": 0,
+       "cpu_seconds": 5.91,
+       "peak_anon": 34725888,
+       "peak_total": 1065324544,
+       "cpu_s_per_10k": 5.533
+      }
+     ]
+    }
+   ],
+   "max_rate_p99_under_50ms": 200
+  }
+ },
+ "cold_cache_redirect": {
+  "achieved_rps": 1000,
+  "p50_ms": 0.387,
+  "p99_ms": 12.435,
+  "p999_ms": 59.615,
+  "error_rate": 0.0,
+  "cpu_s_per_10k": 3.667,
+  "requests": 15000,
+  "rate": 1000,
+  "peak_anon": 38039552,
+  "peak_total": 257818624,
+  "runs": [
+   {
+    "requests": 15000,
+    "errors": 0,
+    "error_rate": 0.0,
+    "achieved_rps": 1000,
+    "p50_ms": 0.457,
+    "p99_ms": 11.928,
+    "p999_ms": 39.592,
+    "max_ms": 50.669,
+    "codes": {
+     "307": 15000
+    },
+    "rate": 1000,
+    "cpu_seconds": 5.33,
+    "peak_anon": 37986304,
+    "peak_total": 199794688,
+    "cpu_s_per_10k": 3.555
+   },
+   {
+    "requests": 15000,
+    "errors": 0,
+    "error_rate": 0.0,
+    "achieved_rps": 1000,
+    "p50_ms": 0.381,
+    "p99_ms": 26.201,
+    "p999_ms": 59.615,
+    "max_ms": 79.145,
+    "codes": {
+     "307": 15000
+    },
+    "rate": 1000,
+    "cpu_seconds": 5.57,
+    "peak_anon": 37982208,
+    "peak_total": 257818624,
+    "cpu_s_per_10k": 3.715
+   },
+   {
+    "requests": 14998,
+    "errors": 0,
+    "error_rate": 0.0,
+    "achieved_rps": 1000,
+    "p50_ms": 0.387,
+    "p99_ms": 12.435,
+    "p999_ms": 61.325,
+    "max_ms": 77.109,
+    "codes": {
+     "307": 14998
+    },
+    "rate": 1000,
+    "cpu_seconds": 5.5,
+    "peak_anon": 38039552,
+    "peak_total": 208654336,
+    "cpu_s_per_10k": 3.667
+   }
+  ]
+ },
+ "disk_end": {
+  "bytes": 2958790656,
+  "inodes": 8
+ },
+ "finished": "2026-10-31T12:53:04Z"
+}

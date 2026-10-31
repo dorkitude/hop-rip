@@ -1,0 +1,6 @@
+# Sensitivity variant (BENCH_VARIANT=notrack): Shlink with visit tracking off, so a redirect is a pure
+# lookup, as in hop.
+services:
+  shlink:
+    environment:
+      DISABLE_TRACKING: "true"

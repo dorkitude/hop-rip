@@ -1,0 +1,17 @@
+# Kutt v3.2.6 (Node + SQLite via better-sqlite3), as in the project's default docker-compose.yml.
+x-limits: &limits
+  cgroup_parent: bench.slice
+  network_mode: host
+  cpus: 2
+  cpuset: "0-1"
+  mem_limit: 1g
+  memswap_limit: 1g
+services:
+  kutt:
+    <<: *limits
+    image: kutt/kutt:v3.2.6
+    environment:
+      JWT_SECRET: ${KUTT_JWT_SECRET:?run bench.py, which writes bench/.env}
+      DEFAULT_DOMAIN: 127.0.0.1:3000
+      DB_FILENAME: /var/lib/kutt/data.sqlite
+    volumes: ["${BENCH_DATA:-/srv/bench}/kutt:/var/lib/kutt"]

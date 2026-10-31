@@ -1,0 +1,15 @@
+# hop 0.3.0, built from this checkout by bench/setup-host.sh (image hop-rip:bench).
+x-limits: &limits
+  cgroup_parent: bench.slice   # the whole stack shares 2 CPUs (0-1) and 1 GiB; see setup-host.sh
+  network_mode: host
+  cpus: 2
+  cpuset: "0-1"
+  mem_limit: 1g
+  memswap_limit: 1g
+services:
+  hop:
+    <<: *limits
+    image: hop-rip:bench
+    user: "${BENCH_UID:-1000}:${BENCH_GID:-1000}"
+    command: ["--data", "/data", "--addr", "127.0.0.1:8080", "--base-url", "http://127.0.0.1:8080"]
+    volumes: ["${BENCH_DATA:-/srv/bench}/hop:/data"]

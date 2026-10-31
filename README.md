@@ -61,6 +61,22 @@ exclusive lock on `<data>/hop.lock`), so run one server per folder. Back up by c
 Data from 0.1 and 0.2 (one file per link under `<data>/links/`) moves into shards the next time
 the server starts.
 
+## Benchmarks
+
+Against four popular self-hosted shorteners, with 100,000 links each and every system held to 2 CPUs and 1 GiB:
+
+| | hop | Chhoto URL | Kutt | YOURLS | Shlink |
+| --- | --- | --- | --- | --- | --- |
+| Max redirects/s | **89,187** | 5,897 | 1,313 | 540 | 361 |
+| Max creates/s | **451** | 406 | 184 | 21 | 24 |
+| Idle memory (MiB) | **0.4** | 2.5 | 147 | 123 | 171 |
+| Cold start (s) | **0.30** | 0.69 | 2.49 | 3.49 | 3.04 |
+| Disk for 100k links (MB) | 211 | 75 | **30** | 67 | 54 |
+
+hop's trade-offs are slower creates at the tail (each one fsyncs its shard) and more disk. The method,
+latency ladders, a million-link run and caveats are in [BENCHMARKS.md](BENCHMARKS.md), and the harness
+to rerun it all is in [`bench/`](bench/).
+
 ## Run your own
 
 ```bash

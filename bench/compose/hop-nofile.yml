@@ -1,0 +1,6 @@
+# Sensitivity variant (BENCH_VARIANT=nofile): hop with a raised open-file limit. Not the default:
+# Docker and systemd both give services a soft limit of 1024.
+services:
+  hop:
+    ulimits:
+      nofile: {soft: 65536, hard: 65536}

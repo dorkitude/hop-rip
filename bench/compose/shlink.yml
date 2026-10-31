@@ -1,0 +1,37 @@
+# Shlink 5.1.8 (PHP on RoadRunner) + MariaDB 11.4. Shlink's docs call SQLite "testing only", so it
+# gets a real database. Both containers share the one 2-CPU / 1 GiB slice.
+x-limits: &limits
+  cgroup_parent: bench.slice
+  network_mode: host
+  cpus: 2
+  cpuset: "0-1"
+  mem_limit: 1g
+  memswap_limit: 1g
+services:
+  db:
+    <<: *limits
+    image: mariadb:11.4
+    command: ["--bind-address=127.0.0.1", "--port=3306"]
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?run bench.py, which writes bench/.env}
+      MARIADB_DATABASE: shlink
+      MARIADB_USER: shlink
+      MARIADB_PASSWORD: ${DB_PASSWORD:?}
+    volumes: ["${BENCH_DATA:-/srv/bench}/shlink-db:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 1s
+      retries: 120
+  shlink:
+    <<: *limits
+    image: shlinkio/shlink:5.1.8
+    depends_on: {db: {condition: service_healthy}}
+    environment:
+      DEFAULT_DOMAIN: 127.0.0.1:8080
+      IS_HTTPS_ENABLED: "false"
+      DB_DRIVER: maria
+      DB_HOST: 127.0.0.1
+      DB_NAME: shlink
+      DB_USER: shlink
+      DB_PASSWORD: ${DB_PASSWORD:?}
+      INITIAL_API_KEY: ${SHLINK_API_KEY:?}

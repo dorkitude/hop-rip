@@ -1,0 +1,35 @@
+# YOURLS 1.10.6 (official image: PHP 8.5 + Apache mod_php, listening on 8080) + MariaDB 11.4, sharing one slice.
+x-limits: &limits
+  cgroup_parent: bench.slice
+  network_mode: host
+  cpus: 2
+  cpuset: "0-1"
+  mem_limit: 1g
+  memswap_limit: 1g
+services:
+  db:
+    <<: *limits
+    image: mariadb:11.4
+    command: ["--bind-address=127.0.0.1", "--port=3306"]
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?run bench.py, which writes bench/.env}
+      MARIADB_DATABASE: yourls
+      MARIADB_USER: yourls
+      MARIADB_PASSWORD: ${DB_PASSWORD:?}
+    volumes: ["${BENCH_DATA:-/srv/bench}/yourls-db:/var/lib/mysql"]
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 1s
+      retries: 120
+  yourls:
+    <<: *limits
+    image: yourls:1.10.6-apache
+    depends_on: {db: {condition: service_healthy}}
+    environment:
+      YOURLS_SITE: http://127.0.0.1:8080
+      YOURLS_DB_HOST: 127.0.0.1
+      YOURLS_DB_NAME: yourls
+      YOURLS_DB_USER: yourls
+      YOURLS_DB_PASS: ${DB_PASSWORD:?}
+      YOURLS_USER: admin
+      YOURLS_PASS: ${YOURLS_PASSWORD:?}
