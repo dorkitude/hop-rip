@@ -10,7 +10,7 @@ Measured 2026-10-31 on hop 0.3.0 (`889226d`).
 
 **In short:** hop serves redirects 10–15× faster than the next-best system (Chhoto URL), using a third of
 its CPU per request, with the smallest memory footprint and the fastest cold start. Its weak spots are
-creates (each one fsyncs its shard file, so tail latency is worse than SQLite's) and disk use (small shard
+creates (each one fsyncs its shard file, so tail latency is worse than SQLite's) and disk use for small instances (small shard
 files each take a full 4 KB block).
 
 - **Redirects:** hop holds a p99 under 50 ms up to 20,000 redirects/s and peaks at about 89,000/s with
@@ -23,7 +23,9 @@ files each take a full 4 KB block).
   full load hop and Chhoto are close (451/s and 406/s); Kutt manages 184/s, Shlink 24/s and YOURLS 21/s.
 - **Footprint:** hop idles at 0.4 MiB of process memory and peaks at 37 MiB under load. The PHP and Node
   systems idle at 120–170 MiB, and Shlink and YOURLS (with MariaDB) fill the whole 1 GiB.
-- **Disk:** 100,000 links take 211 MB and about 51,500 files for hop, against 30–75 MB for the others.
+- **Disk:** per million links, hop needs 450 MB, less than Chhoto's 691 MB (both measured). At 100,000
+  links hop uses the most (211 MB), because its 65,536 shard files are then mostly a link or two each,
+  and every file takes at least one 4 KB block. See [disk per million links](#disk-per-million-links).
 - **Open-file limit:** at very high open-loop rates hop runs out of file descriptors under the usual
   soft limit of 1,024. With the limit raised (`hop, open-file limit raised`), missing-slug lookups hold
   the latency bar up to 40,000/s instead of 5,000/s. See [caveats](#caveats).
@@ -48,6 +50,20 @@ files each take a full 4 KB block).
 | Inodes after seeding (net of empty) | 51,568 | 0 | 0 | 0 | 0 | - | 51,568 |
 | Seeding rate via API (8 conns) | 432/s | 612/s | 21/s | 38/s | 158/s | - | 804/s |
 | Cold start to first redirect (s) | 0.30 | 0.69 | 3.04 | 3.49 | 2.49 | 4.15 | 0.28 |
+
+### Disk per million links
+
+| | hop 0.3.1 | Chhoto URL | Kutt | YOURLS | Shlink |
+| --- | --- | --- | --- | --- | --- |
+| MB per 1M links | 450 | 691 | ≈303 | ≈670 | ≈544 |
+| How | measured at 1M | measured at 1M | 100k × 10 | 100k × 10 | 100k × 10 |
+
+hop and Chhoto were seeded with a million links. Seeding Kutt, YOURLS and Shlink to a million through
+their APIs would take 2 to 13 hours each (158, 38 and 21 links/s), so their figures scale the 100k
+measurement linearly, which suits row storage in a database. hop's own size isn't linear: 100,000
+links take 211 MB because the shard files are nearly empty, and the blocks fill up as links are added.
+hop's figure is from 0.3.1, which writes shards as compact JSON (0.3.0's indented JSON took 480 MB; the
+same data is 301 MB before block rounding). Raw numbers: `bench/results/hop-disk-0.3.1.json`.
 
 ### Redirects of random existing slugs
 
@@ -239,7 +255,8 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 | max (64 conns) | 574/s: 94 / 312 / 369 | 763/s: 75 / 206 / 296 |
 
 At a million links hop's p99 crosses 50 ms above 2,000 redirects/s at fixed rates, while its closed-loop
-maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB against hop's 480 MB.
+maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB against hop's 480 MB
+(449.5 MB with 0.3.1's compact JSON).
 
 ## Caveats
 

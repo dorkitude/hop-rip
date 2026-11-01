@@ -1,0 +1,9 @@
+{
+ "system": "hop",
+ "version": "0.3.1",
+ "note": "Disk only: hop 0.3.1 (compact shard JSON) seeded through its API with the same dataset as the other runs (bench.py dataset()), on ext4 on the hop-rip VM, 2026-11-01. du -sB1 and du --inodes of the data folder, net of empty.",
+ "disk": {
+  "100000": {"bytes": 211161088, "inodes": 51568},
+  "1000000": {"bytes": 449454080, "inodes": 65792, "apparent_bytes": 300976109}
+ }
+}

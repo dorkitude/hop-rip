@@ -71,9 +71,10 @@ Against four popular self-hosted shorteners, with 100,000 links each and every s
 | Max creates/s | **451** | 406 | 184 | 21 | 24 |
 | Idle memory (MiB) | **0.4** | 2.5 | 147 | 123 | 171 |
 | Cold start (s) | **0.30** | 0.69 | 2.49 | 3.49 | 3.04 |
-| Disk for 100k links (MB) | 211 | 75 | **30** | 67 | 54 |
+| Disk per 1M links (MB) | 450 | 691 | **≈303** | ≈670 | ≈544 |
 
-hop's trade-offs are slower creates at the tail (each one fsyncs its shard) and more disk. The method,
+≈ scales the 100k measurement. hop's trade-offs are slower creates at the tail (each one fsyncs its
+shard) and more disk on small instances, where its shard files are nearly empty. The method,
 latency ladders, a million-link run and caveats are in [BENCHMARKS.md](BENCHMARKS.md), and the harness
 to rerun it all is in [`bench/`](bench/).
 

@@ -101,7 +101,7 @@ impl Store {
         let name: String = rand::thread_rng().sample_iter(&Alphanumeric).take(16).map(char::from).collect();
         let tmp = self.root.join("tmp").join(name);
         let mut f = fs::File::create(&tmp)?;
-        f.write_all(&serde_json::to_vec_pretty(shard)?)?;
+        f.write_all(&serde_json::to_vec(shard)?)?;
         f.sync_all()?;
         fs::rename(&tmp, &path)
     }
