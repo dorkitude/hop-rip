@@ -9,6 +9,7 @@ Group=hop
 EnvironmentFile=-/etc/hop/env
 ExecStart=/usr/local/bin/hop serve
 Restart=on-failure
+LimitNOFILE=65536:524288
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true

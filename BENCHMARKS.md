@@ -28,7 +28,8 @@ files each take a full 4 KB block).
   and every file takes at least one 4 KB block. See [disk per million links](#disk-per-million-links).
 - **Open-file limit:** at very high open-loop rates hop runs out of file descriptors under the usual
   soft limit of 1,024. With the limit raised (`hop, open-file limit raised`), missing-slug lookups hold
-  the latency bar up to 40,000/s instead of 5,000/s. See [caveats](#caveats).
+  the latency bar up to 40,000/s instead of 5,000/s. Since 0.3.2, hop raises its own soft limit to the hard
+  limit at startup, so it gets the raised-limit numbers by default. See [caveats](#caveats).
 
 | | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
 |---|---|---|---|---|---|---|---|
@@ -265,10 +266,10 @@ maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB a
   point.
 - **Features differ.** Shlink, YOURLS and Kutt record visits, and Chhoto counts hits; hop does neither.
   The Shlink tracking-off run shows that tracking is part of the gap, not all of it.
-- **Open files.** hop keeps the default soft limit of 1,024 file descriptors (Docker's and systemd's
-  default). Each connection and each shard read uses one, so open-loop overload turns into errors sooner
-  than it would with a higher limit. Raising `LimitNOFILE` (systemd) or `ulimits.nofile` (Docker) helps,
-  as the variant run shows.
+- **Open files.** The measured hop 0.3.0 kept the default soft limit of 1,024 file descriptors (Docker's
+  and systemd's default). Each connection and each shard read uses one, so open-loop overload turned into
+  errors sooner than with a higher limit, as the variant run shows. hop 0.3.2 raises its soft limit to the
+  hard limit at startup, and `deploy/hop.service` sets `LimitNOFILE=65536:524288`.
 - **Write bursts.** Straight after 100,000 creates the kernel is still writing back tens of thousands
   of dirty shard files, which slows reads for a while. That's why the harness syncs and drops the page
   cache before measuring: the numbers describe a server restarted with existing data.

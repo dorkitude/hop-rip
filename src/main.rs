@@ -128,7 +128,33 @@ fn call(req: ureq::Request, body: Option<Value>) -> Result<Value, String> {
     }
 }
 
+/// Raise the soft open-file limit toward the hard limit. Each request can hold a socket and a shard file,
+/// and the usual soft default of 1,024 runs out under load long before the CPU does.
+#[cfg(unix)]
+fn raise_nofile() {
+    let mut lim = libc::rlimit { rlim_cur: 0, rlim_max: 0 };
+    if unsafe { libc::getrlimit(libc::RLIMIT_NOFILE, &mut lim) } != 0 {
+        return;
+    }
+    let before = lim.rlim_cur;
+    // Some systems (macOS) report an unlimited hard limit but refuse a soft limit that large, so step down.
+    for want in [lim.rlim_max.min(1 << 20), 65_536, 10_240] {
+        if want <= before {
+            break;
+        }
+        let new = libc::rlimit { rlim_cur: want, rlim_max: lim.rlim_max };
+        if unsafe { libc::setrlimit(libc::RLIMIT_NOFILE, &new) } == 0 {
+            eprintln!("hop: open-file limit {before} -> {want}");
+            return;
+        }
+    }
+}
+
+#[cfg(not(unix))]
+fn raise_nofile() {}
+
 async fn serve(data: PathBuf, addr: String, base_url: Option<String>) -> Result<(), String> {
+    raise_nofile();
     let store = hop_rip::store::Store::open(&data).map_err(|e| format!("open {}: {e}", data.display()))?;
     let app = hop_rip::server::router(hop_rip::server::App { store, base_url });
     let listener = tokio::net::TcpListener::bind(&addr).await.map_err(|e| format!("bind {addr}: {e}"))?;
