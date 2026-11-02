@@ -8,7 +8,7 @@
 # - creates bench.slice: every container of the system under test runs inside it, so the whole stack
 #   (app + its database) shares 2 CPUs (cores 0-1) and 1 GiB of RAM, with no swap
 # - raises socket and file limits so the load generator isn't the bottleneck
-# - builds the hop image from this checkout
+# - builds the hop-rip image from this checkout
 set -euo pipefail
 cd "$(dirname "$0")/.."
 

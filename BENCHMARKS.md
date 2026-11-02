@@ -1,37 +1,37 @@
 # Benchmarks
 
-How hop compares with the leading open-source self-hosted URL shorteners on speed and footprint.
+How hop-rip compares with the leading open-source self-hosted URL shorteners on speed and footprint.
 Everything here can be rerun with the scripts in [`bench/`](bench/). Raw results are in
 [`bench/results/`](bench/results/).
 
-Measured 2026-10-31 on hop 0.3.0 (`889226d`).
+Measured 2026-10-31 on hop-rip 0.3.0 (`889226d`).
 
 ## Results
 
-**In short:** hop serves redirects 10–15× faster than the next-best system (Chhoto URL), using a third of
+**In short:** hop-rip serves redirects 10–15× faster than the next-best system (Chhoto URL), using a third of
 its CPU per request, with the smallest memory footprint and the fastest cold start. Its weak spots are
 creates (each one fsyncs its shard file, so tail latency is worse than SQLite's) and disk use for small instances (small shard
 files each take a full 4 KB block).
 
-- **Redirects:** hop holds a p99 under 50 ms up to 20,000 redirects/s and peaks at about 89,000/s with
+- **Redirects:** hop-rip holds a p99 under 50 ms up to 20,000 redirects/s and peaks at about 89,000/s with
   64 connections. Chhoto peaks at about 5,900/s, Kutt at 1,300/s, YOURLS at 540/s and Shlink at 360/s.
 - **Shlink and YOURLS top out in the low hundreds per second** on 2 CPUs. Shlink records every visit in
   MariaDB; with tracking off it gets to 100/s within the latency bar (439/s max). Past their limit both
   stop answering within the 10 s timeout, and Shlink needed a restart before the next step (the harness
   does that and records it as `restarted_before`).
-- **Creates:** Chhoto (SQLite) has the best create latency: p99 29 ms at 200/s against hop's 134 ms. At
-  full load hop and Chhoto are close (451/s and 406/s); Kutt manages 184/s, Shlink 24/s and YOURLS 21/s.
-- **Footprint:** hop idles at 0.4 MiB of process memory and peaks at 37 MiB under load. The PHP and Node
+- **Creates:** Chhoto (SQLite) has the best create latency: p99 29 ms at 200/s against hop-rip's 134 ms. At
+  full load hop-rip and Chhoto are close (451/s and 406/s); Kutt manages 184/s, Shlink 24/s and YOURLS 21/s.
+- **Footprint:** hop-rip idles at 0.4 MiB of process memory and peaks at 37 MiB under load. The PHP and Node
   systems idle at 120–170 MiB, and Shlink and YOURLS (with MariaDB) fill the whole 1 GiB.
-- **Disk:** per million links, hop needs 450 MB, less than Chhoto's 691 MB (both measured). At 100,000
-  links hop uses the most (211 MB), because its 65,536 shard files are then mostly a link or two each,
+- **Disk:** per million links, hop-rip needs 450 MB, less than Chhoto's 691 MB (both measured). At 100,000
+  links hop-rip uses the most (211 MB), because its 65,536 shard files are then mostly a link or two each,
   and every file takes at least one 4 KB block. See [disk per million links](#disk-per-million-links).
-- **Open-file limit:** at very high open-loop rates hop runs out of file descriptors under the usual
+- **Open-file limit:** at very high open-loop rates hop-rip runs out of file descriptors under the usual
   soft limit of 1,024. With the limit raised (`hop, open-file limit raised`), missing-slug lookups hold
-  the latency bar up to 40,000/s instead of 5,000/s. Since 0.3.2, hop raises its own soft limit to the hard
+  the latency bar up to 40,000/s instead of 5,000/s. Since 0.3.2, hop-rip raises its own soft limit to the hard
   limit at startup, so it gets the raised-limit numbers by default. See [caveats](#caveats).
 
-| | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
+| | hop-rip 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop-rip, open-file limit raised |
 |---|---|---|---|---|---|---|---|
 | Redirects: max rate with p99 < 50 ms | 20,000/s | 2,000/s | 0/s | 200/s | 1,000/s | 100/s | 20,000/s |
 | Redirects: max throughput (64 conns) | 89,187/s | 5,897/s | 361/s | 540/s | 1,313/s | 439/s | 44,637/s |
@@ -54,23 +54,23 @@ files each take a full 4 KB block).
 
 ### Disk per million links
 
-| | hop 0.3.1 | Chhoto URL | Kutt | YOURLS | Shlink |
+| | hop-rip 0.3.1 | Chhoto URL | Kutt | YOURLS | Shlink |
 | --- | --- | --- | --- | --- | --- |
 | MB per 1M links | 450 | 691 | ≈303 | ≈670 | ≈544 |
 | How | measured at 1M | measured at 1M | 100k × 10 | 100k × 10 | 100k × 10 |
 
-hop and Chhoto were seeded with a million links. Seeding Kutt, YOURLS and Shlink to a million through
+hop-rip and Chhoto were seeded with a million links. Seeding Kutt, YOURLS and Shlink to a million through
 their APIs would take 2 to 13 hours each (158, 38 and 21 links/s), so their figures scale the 100k
-measurement linearly, which suits row storage in a database. hop's own size isn't linear: 100,000
+measurement linearly, which suits row storage in a database. hop-rip's own size isn't linear: 100,000
 links take 211 MB because the shard files are nearly empty, and the blocks fill up as links are added.
-hop's figure is from 0.3.1, which writes shards as compact JSON (0.3.0's indented JSON took 480 MB; the
+hop-rip's figure is from 0.3.1, which writes shards as compact JSON (0.3.0's indented JSON took 480 MB; the
 same data is 301 MB before block rounding). Raw numbers: `bench/results/hop-disk-0.3.1.json`.
 
 ### Redirects of random existing slugs
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop-rip, open-file limit raised |
 |---|---|---|---|---|---|---|---|
 | 100/s |  |  | 100/s: 40 / 1119 / 1202 | 100/s: 4.84 / 49 / 58 |  | 100/s: 3.77 / 45 / 181 |  |
 | 200/s |  |  | 0/s: 10001 / 10050 / 10058, **100.0% err** | 200/s: 3.70 / 41 / 61 |  | 200/s: 3.65 / 51 / 292 |  |
@@ -87,7 +87,7 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop-rip, open-file limit raised |
 |---|---|---|---|---|---|---|---|
 | 100/s |  |  | 100/s: 6.75 / 217 / 291 | 100/s: 2.71 / 35 / 45 | 100/s: 1.77 / 40 / 85 | 100/s: 3.29 / 18 / 174 |  |
 | 200/s |  |  | 200/s: 6.44 / 177 / 367 | 200/s: 2.03 / 39 / 51 | 200/s: 1.44 / 33 / 39 | 200/s: 2.20 / 44 / 187 |  |
@@ -103,7 +103,7 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop-rip, open-file limit raised |
 |---|---|---|---|---|---|---|---|
 | 100/s |  |  | 100/s: 6.47 / 220 / 624 | 69/s: 116 / 10001 / 10001, **4.0% err** | 100/s: 3.89 / 67 / 76 |  |  |
 | 200/s |  |  | 188/s: 550 / 972 / 1098 |  | 200/s: 3.30 / 49 / 65 |  |  |
@@ -116,7 +116,7 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop, open-file limit raised |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 | Shlink 5.1.8 | YOURLS 1.10.6 | Kutt 3.2.6 | Shlink, tracking off | hop-rip, open-file limit raised |
 |---|---|---|---|---|---|---|---|
 | 100/s | 100/s: 3.16 / 78 / 150 | 100/s: 2.71 / 14 / 28 | 0/s: 10001 / 10004 / 10009, **100.0% err** | 3/s: 10001 / 10039 / 10040, **94.4% err** | 91/s: 381 / 6038 / 6541 |  |  |
 | 200/s | 200/s: 5.51 / 134 / 160 | 200/s: 2.48 / 29 / 55 |  |  | 102/s: 2252 / 10006 / 10028, **19.2% err** |  |  |
@@ -129,19 +129,19 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
 | System | Version | Stack | Storage used here |
 | --- | --- | --- | --- |
-| **hop** | 0.3.0 | Rust (axum/tokio), one binary | 65,536 JSON shard files (`--data`) |
+| **hop-rip** | 0.3.0 | Rust (axum/tokio), one binary | 65,536 JSON shard files (`--data`) |
 | [Chhoto URL](https://github.com/SinTan1729/chhoto-url) | 7.10.5 | Rust (actix-web) | SQLite, WAL mode, `synchronous=FULL` (its documented recommendation) |
 | [Shlink](https://shlink.io) | 5.1.8 | PHP 8.5 on RoadRunner | MariaDB 11.4 (Shlink's docs call SQLite "testing only") |
 | [YOURLS](https://yourls.org) | 1.10.6 | PHP 8.5, Apache mod_php (official image) | MariaDB 11.4 |
 | [Kutt](https://github.com/thedevs-network/kutt) | 3.2.6 | Node 22 (Express) | SQLite via better-sqlite3 (its default compose file) |
 
-Each runs from its official Docker image with its documented settings. hop runs from an image built
+Each runs from its official Docker image with its documented settings. hop-rip runs from an image built
 from this checkout ([`bench/hop/Dockerfile`](bench/hop/Dockerfile): the release binary on
 `distroless/cc-debian12`). The compose files are in [`bench/compose/`](bench/compose/).
 
-Every system runs as shipped, including features hop doesn't have. Shlink records every visit in its
+Every system runs as shipped, including features hop-rip doesn't have. Shlink records every visit in its
 database, YOURLS logs every click, Kutt queues a visit record, and Chhoto increments a hit counter.
-hop does none of that, so a redirect is less work for it. To measure how much that matters, Shlink
+hop-rip does none of that, so a redirect is less work for it. To measure how much that matters, Shlink
 was also run with `DISABLE_TRACKING=true`.
 
 ## Setup
@@ -155,7 +155,7 @@ was also run with `DISABLE_TRACKING=true`.
   - the **system under test** runs in a systemd slice, `bench.slice`, on cores 0-1 with
     `CPUQuota=200%`, `MemoryMax=1G` and no swap. All of a stack's containers join that slice
     (`cgroup_parent`), so **an app and its database share the same 2 CPUs and 1 GiB**. Each
-    container also has `--cpus=2 --memory=1g`. hop runs in Docker like the others.
+    container also has `--cpus=2 --memory=1g`. hop-rip runs in Docker like the others.
   - **vegeta** and the harness run on cores 2-7 (`taskset`).
   - All containers use host networking, so no docker-proxy or NAT sits in the request path.
 - **Data:** every system is seeded through its own create API with the same 100,000 links: random
@@ -164,7 +164,7 @@ was also run with `DISABLE_TRACKING=true`.
   expected targets. Every system passed.
 - After seeding, the harness runs `sync` and drops the page cache. Measurement then starts like a
   restarted server with existing data, not straight after a 100,000-write burst. (Why that matters
-  for hop: see [caveats](#caveats).)
+  for hop-rip: see [caveats](#caveats).)
 
 ## Method
 
@@ -181,10 +181,10 @@ was also run with `DISABLE_TRACKING=true`.
   more than 1% errors, or under 90% of the target rate achieved. Then one **max-throughput** run sends
   closed-loop load with 64 concurrent requests (not for the mix). Before each step the harness checks
   that the server still answers, and restarts the stack if an overload left it hung.
-  The hop, Chhoto and Kutt redirect runs predate the 100-500/s steps, which they all pass.
+  The hop-rip, Chhoto and Kutt redirect runs predate the 100-500/s steps, which they all pass.
 - **Each point is 3 runs of 15 seconds; tables show the median.** The harness pauses 2 s between runs.
-- **Success** means the system's normal answer: its redirect status for existing slugs (hop and Shlink
-  `302`, Chhoto `307`, YOURLS `301`, Kutt `302`), its not-found answer for missing slugs (hop, Chhoto
+- **Success** means the system's normal answer: its redirect status for existing slugs (hop-rip and Shlink
+  `302`, Chhoto `307`, YOURLS `301`, Kutt `302`), its not-found answer for missing slugs (hop-rip, Chhoto
   and Shlink `404`; YOURLS and Kutt redirect to a page, `302`), and `200/201` for creates. Anything
   else, including timeouts (10 s), counts as an error.
 - **"Max rate with p99 < 50 ms"** is the highest fixed rate on the ladder with a p99 under 50 ms and
@@ -208,9 +208,9 @@ was also run with `DISABLE_TRACKING=true`.
 
 ## 1,000,000 links
 
-hop and Chhoto URL were also seeded with a million links (redirect and create workloads only).
+hop-rip and Chhoto URL were also seeded with a million links (redirect and create workloads only).
 
-| | hop 0.3.0 | Chhoto URL 7.10.5 |
+| | hop-rip 0.3.0 | Chhoto URL 7.10.5 |
 |---|---|---|
 | Redirects: max rate with p99 < 50 ms | 2,000/s | 2,000/s |
 | Redirects: max throughput (64 conns) | 51,070/s | 4,116/s |
@@ -235,7 +235,7 @@ hop and Chhoto URL were also seeded with a million links (redirect and create wo
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 |
 |---|---|---|
 | 1,000/s | 1,000/s: 0.21 / 6.56 / 33 | 1,000/s: 0.22 / 2.46 / 4.45 |
 | 2,000/s | 2,000/s: 0.24 / 23 / 37 | 2,000/s: 0.19 / 2.11 / 4.67 |
@@ -247,7 +247,7 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
 Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 
-| rate | hop 0.3.0 | Chhoto URL 7.10.5 |
+| rate | hop-rip 0.3.0 | Chhoto URL 7.10.5 |
 |---|---|---|
 | 100/s | 100/s: 3.22 / 16 / 67 | 100/s: 3.25 / 35 / 60 |
 | 200/s | 200/s: 2.55 / 104 / 164 | 200/s: 2.33 / 40 / 74 |
@@ -255,8 +255,8 @@ Each cell: achieved rate: p50 / p99 / p99.9 latency in ms (median of 3 runs).
 | 1,000/s | 369/s: 1.03 / 1736 / 10001, **63.1% err** | 655/s: 2611 / 10001 / 10004, **6.8% err** |
 | max (64 conns) | 574/s: 94 / 312 / 369 | 763/s: 75 / 206 / 296 |
 
-At a million links hop's p99 crosses 50 ms above 2,000 redirects/s at fixed rates, while its closed-loop
-maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB against hop's 480 MB
+At a million links hop-rip's p99 crosses 50 ms above 2,000 redirects/s at fixed rates, while its closed-loop
+maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB against hop-rip's 480 MB
 (449.5 MB with 0.3.1's compact JSON).
 
 ## Caveats
@@ -264,11 +264,11 @@ maximum is still 51,000/s (Chhoto: 4,100/s). Chhoto's database grows to 691 MB a
 - **One machine, loopback.** The load generator and the server share one VM on separate cores, so there is
   no real network in the path. Absolute numbers will be lower behind a proxy and TLS; the ratios are the
   point.
-- **Features differ.** Shlink, YOURLS and Kutt record visits, and Chhoto counts hits; hop does neither.
+- **Features differ.** Shlink, YOURLS and Kutt record visits, and Chhoto counts hits; hop-rip does neither.
   The Shlink tracking-off run shows that tracking is part of the gap, not all of it.
-- **Open files.** The measured hop 0.3.0 kept the default soft limit of 1,024 file descriptors (Docker's
+- **Open files.** The measured hop-rip 0.3.0 kept the default soft limit of 1,024 file descriptors (Docker's
   and systemd's default). Each connection and each shard read uses one, so open-loop overload turned into
-  errors sooner than with a higher limit, as the variant run shows. hop 0.3.2 raises its soft limit to the
+  errors sooner than with a higher limit, as the variant run shows. hop-rip 0.3.2 raises its soft limit to the
   hard limit at startup, and `deploy/hop.service` sets `LimitNOFILE=65536:524288`.
 - **Write bursts.** Straight after 100,000 creates the kernel is still writing back tens of thousands
   of dirty shard files, which slows reads for a while. That's why the harness syncs and drops the page

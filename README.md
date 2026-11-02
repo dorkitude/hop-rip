@@ -1,6 +1,6 @@
 # hop.rip 🐇
 
-A tiny URL shortener you can run yourself. One Rust binary, `hop`, is the server, the web app, the
+A tiny URL shortener you can run yourself. hop-rip is one Rust binary, `hop`, that is the server, the web app, the
 API and the CLI. Links live as plain files in sharded folders, so there's no database to run.
 
 The public instance is **https://hop.rip**.
@@ -65,7 +65,7 @@ the server starts.
 
 Against four popular self-hosted shorteners, with 100,000 links each and every system held to 2 CPUs and 1 GiB:
 
-| | hop | Chhoto URL | Kutt | YOURLS | Shlink |
+| | hop-rip | Chhoto URL | Kutt | YOURLS | Shlink |
 | --- | --- | --- | --- | --- | --- |
 | Max redirects/s | **89,187** | 5,897 | 1,313 | 540 | 361 |
 | Max creates/s | **451** | 406 | 184 | 21 | 24 |
@@ -73,7 +73,7 @@ Against four popular self-hosted shorteners, with 100,000 links each and every s
 | Cold start (s) | **0.30** | 0.69 | 2.49 | 3.49 | 3.04 |
 | Disk per 1M links (MB) | 450 | 691 | **≈303** | ≈670 | ≈544 |
 
-≈ scales the 100k measurement. hop's trade-offs are slower creates at the tail (each one fsyncs its
+≈ scales the 100k measurement. hop-rip's trade-offs are slower creates at the tail (each one fsyncs its
 shard) and more disk on small instances, where its shard files are nearly empty. The method,
 latency ladders, a million-link run and caveats are in [BENCHMARKS.md](BENCHMARKS.md), and the harness
 to rerun it all is in [`bench/`](bench/).

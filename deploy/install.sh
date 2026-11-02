@@ -26,4 +26,4 @@ sudo systemctl daemon-reload
 sudo systemctl enable hop.service >/dev/null
 sudo systemctl restart hop.service
 sleep 1
-curl -fsS "http://$addr/healthz" >/dev/null && echo "hop is up on $addr, serving $base_url"
+curl -fsS "http://$addr/healthz" >/dev/null && echo "hop-rip is up on $addr, serving $base_url"

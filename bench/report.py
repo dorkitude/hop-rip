@@ -11,8 +11,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ORDER = ["hop", "chhoto", "shlink", "yourls", "kutt"]
-NAMES = {"hop": "hop 0.3.0", "chhoto": "Chhoto URL 7.10.5", "shlink": "Shlink 5.1.8", "yourls": "YOURLS 1.10.6",
-         "kutt": "Kutt 3.2.6", "shlink-notrack": "Shlink, tracking off", "hop-nofile": "hop, open-file limit raised"}
+NAMES = {"hop": "hop-rip 0.3.0", "chhoto": "Chhoto URL 7.10.5", "shlink": "Shlink 5.1.8", "yourls": "YOURLS 1.10.6",
+         "kutt": "Kutt 3.2.6", "shlink-notrack": "Shlink, tracking off", "hop-nofile": "hop-rip, open-file limit raised"}
 
 
 def load(tag: str, variant_files: list[str]) -> dict:
