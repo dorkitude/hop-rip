@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Install or upgrade hop as a systemd service on a Linux host, from this checkout. Idempotent.
+# Install or upgrade hop-rip as a systemd service on a Linux host, from this checkout. Idempotent.
 #
 #   deploy/install.sh https://short.example.com [127.0.0.1:8080]
 #
